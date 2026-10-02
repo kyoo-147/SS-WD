@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-02T12:20:31.531Z",
-  "note": "First-party portable metadata only. External product implementations, credentials, memories, binaries and transcripts are excluded.",
-  "piAgentProfiles": [
+  "generatedAt": "2026-10-02T12:49:17.082Z",
+  "note": "Allowlisted portable agent-profile metadata only. Implementations, credentials, memories, binaries and transcripts are excluded.",
+  "approvedPiAgentProfiles": [
     {
       "name": "luna-reviewer.md",
       "sha256": "5b6a07d5985544801906d954efb4ed106b7eddc21573cb92f896a0116338a0c9",

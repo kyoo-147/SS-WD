@@ -2,6 +2,8 @@
 
 Read `.ai/skills/worker-capabilities.md` before selecting an agent or exact model. Verify the live CLI model list, authentication, quota, and host lifecycle support because these can change.
 
+Select the runtime host separately through `.ai/skills/runtime-adapters.md`. Model quality, worker harness, terminal host, and lifecycle evidence are different routing dimensions.
+
 Select the cheapest reliable capability, not a favorite model.
 
 - Route strong reasoning models to architecture, difficult debugging, ambiguity, complex refactors, code review, and research synthesis.

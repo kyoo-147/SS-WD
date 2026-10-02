@@ -1,6 +1,6 @@
 # SS-WD
 
-SS-WD is the public-safe, portable source of truth for the Founder’s Chief of Staff operating rules, provider-neutral worker orchestration policy, sanitized configuration templates, and restore guidance.
+SS-WD is the public-safe, portable source of truth for the Founder’s Chief of Staff operating rules, provider- and runtime-neutral worker orchestration policy, sanitized configuration templates, and restore guidance.
 
 ## Repository boundary
 
@@ -14,9 +14,10 @@ SS-WD is the public-safe, portable source of truth for the Founder’s Chief of 
 
 1. Keep rules concise, internally consistent, and progressively loaded
 2. Preserve sanitized metadata instead of copying external product implementations
-3. Keep worker execution visible, supervised, and evidence-led
-4. Track worker lifecycles privately and clean completed safe workspaces after archival
-5. Verify every public snapshot for secrets and machine-local material before push
+3. Keep worker execution visible, supervised, evidence-led, and independent from Orca, Herdr, or any single host
+4. Maintain one lifecycle contract across rich hosts, plain CMD/PowerShell, and the future lightweight SS-WD runtime
+5. Track worker lifecycles privately and clean completed safe workspaces after archival
+6. Verify both staged blobs and working-tree snapshot candidates before push
 
 ## Evidence rules
 

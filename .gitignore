@@ -18,6 +18,12 @@ transcripts/
 evidence/
 private/
 secrets/
+.npmrc
+.pypirc
+*.pem
+*.key
+id_rsa
+id_ed25519
 node_modules/
 .DS_Store
 Thumbs.db

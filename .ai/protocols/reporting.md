@@ -17,4 +17,4 @@
 
 ## Chief final report
 
-Use concise headings: **DONE**, **VERIFIED**, **ISSUES**, **NEXT**. State changed files, commands or evidence, unresolved risks, retained worker terminals/worktrees, and the next action without overstating certainty.
+Use concise headings: **DONE**, **VERIFIED**, **ISSUES**, **NEXT**. State changed files, runtime/worker combinations used, commands or evidence, unresolved risks, retained endpoints/worktrees, and the next action without overstating certainty.

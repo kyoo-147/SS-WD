@@ -1,0 +1,16 @@
+{
+  "name": "ss-wd",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Provider-neutral operating toolkit for supervised agent work",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "verify:snapshot": "node scripts/verify-public-snapshot.mjs",
+    "snapshot": "node scripts/snapshot-agent-setup.mjs",
+    "check": "node --check scripts/snapshot-agent-setup.mjs && node --check scripts/verify-public-snapshot.mjs && npm test && npm run verify:snapshot"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

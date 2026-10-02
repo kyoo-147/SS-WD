@@ -2,6 +2,8 @@
 
 Use this file when choosing a worker or model. Capabilities and availability can drift, so verify current CLI model lists, authentication, quota, and host integration before dispatch.
 
+This registry selects worker harnesses and models, not terminal/workspace hosts. Select the runtime independently through `.ai/skills/runtime-adapters.md`; do not assume that a verified worker requires Orca, Herdr, or any other specific host.
+
 Status labels:
 
 - `VERIFIED`: exercised successfully in this project.
@@ -83,8 +85,8 @@ Before dispatch, answer:
 
 1. Does the task require reading, writing, reviewing, research, or UI/browser work?
 2. What is the task's ambiguity and blast radius?
-3. Does the worker have reliable lifecycle support in the active host?
+3. Which runtime hosts this worker, and what lifecycle evidence does that exact combination provide?
 4. Is the account authenticated and within quota?
 5. What is the cheapest verified model capable of producing reliable evidence?
 
-Use strong models for ambiguity, architecture, security, and review. Use fast models for scanning, extraction, mechanical editing, and test execution. Upgrade capability when evidence quality is insufficient.
+Use strong models for ambiguity, architecture, security, and review. Use fast models for scanning, extraction, mechanical editing, and test execution. Upgrade worker capability when evidence quality is insufficient; change runtime only through an explicit, allowed routing decision.

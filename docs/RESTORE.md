@@ -1,12 +1,10 @@
 # Restore and update guide
 
-This guide restores SS-WD’s first-party operating rules and sanitized configuration references. It does not install or redistribute external agent products.
+This guide restores SS-WD's first-party operating rules and sanitized configuration references. It does not install or redistribute external agent products or runtime hosts.
 
-## 1. Install prerequisites
+## 1. Install the minimum prerequisites
 
-Install Git, Node.js, PowerShell, and the worker command-line interfaces approved for your environment. Obtain every external tool from its official distribution channel.
-
-Verify the commands you plan to use:
+Install Git, Node.js 24 or newer, and only the worker/runtime CLIs required by your environment. Obtain every external tool from its official distribution channel.
 
 ```powershell
 git --version
@@ -14,25 +12,36 @@ node --version
 pi --version
 cmdc --version
 agy --version
+herdr --version
+orca --version
 ```
 
-A missing optional worker does not justify silently routing to a different provider. Update `.ai/skills/worker-capabilities.md` with a verified status before dispatch.
+A missing optional worker or runtime does not justify silent substitution. Update the relevant capability record only after live verification.
 
-## 2. Restore settings deliberately
+## 2. Choose worker and runtime separately
+
+Read:
+
+1. `.ai/skills/worker-capabilities.md` for harness/model routing;
+2. `.ai/skills/runtime-adapters.md` for host routing;
+3. `docs/RUNTIME-ADAPTERS.md`;
+4. one selected guide under `docs/platforms/`.
+
+The same task contract may run through Orca, Herdr, PowerShell, CMD, or a future SS-WD runtime. Record the exact combination and its verified lifecycle signals.
+
+## 3. Restore settings deliberately
 
 `snapshots/pi-settings.sanitized.json` is a reference, not an automatic overwrite. Compare each field with the current Pi version and machine:
 
-- choose provider, model, and thinking settings deliberately
-- install only reviewed package versions
-- resolve shell paths on the current host
-- authenticate interactively
-- never restore an old `auth.json`, token, cookie, or trust database
+- choose provider, model, and thinking settings deliberately;
+- install only reviewed package versions;
+- resolve shell paths on the current host;
+- authenticate interactively;
+- never restore an old authentication, token, cookie, or trust store.
 
-The generic worker profiles under `templates/pi-agents/` avoid project-specific paths. Copy and customize them only when Pi’s external-agent mechanism is required.
+The generic worker profiles under `templates/pi-agents/` contain placeholders. Copy and customize them only when the target agent mechanism requires it.
 
-## 3. Initialize private worker records
-
-Create the ignored local operations directory and copy the timeline template:
+## 4. Initialize private worker records
 
 ```powershell
 New-Item -ItemType Directory -Force .pi | Out-Null
@@ -40,41 +49,40 @@ Copy-Item templates/worker-workspace-timeline.md .pi/worker-workspace-timeline.m
 New-Item -ItemType Directory -Force .pi/worker-session-archive | Out-Null
 ```
 
-Do not commit populated timelines, transcripts, or generated evidence.
+Do not commit populated timelines, transcripts, runtime handles, or generated evidence.
 
-## 4. Refresh the safe inventory
+## 5. Refresh the safe inventory
 
-Run the snapshot script after intentional changes to local settings, profiles, or approved capabilities:
+Review `config/snapshot-policy.json`, then run:
 
 ```powershell
-node ./scripts/snapshot-agent-setup.mjs
+npm run snapshot
 ```
 
-The snapshot records sanitized metadata and hashes. It does not copy third-party skill implementations, binaries, private runtime state, or authentication material.
+The script records only allowlisted settings, approved agent-profile metadata, and selected tool versions. It does not inventory installed skills or copy third-party implementations.
 
-## 5. Verify before publishing
-
-Run the public-safety check and inspect the complete diff:
+## 6. Verify before publishing
 
 ```powershell
-node ./scripts/verify-public-snapshot.mjs
+npm run check
 git diff --check
 git status --short
 git diff --cached
 ```
 
-A passing pattern scan is not proof that content is safe. Manually inspect every staged file.
+The verifier scans both staged Git blobs and working-tree candidates. A passing scan is not proof that arbitrary content is safe; manually inspect every staged file.
 
-## 6. Follow the worker lifecycle
+## 7. Follow the worker lifecycle
 
-1. Create one bounded task per worker
-2. Use a shared workspace only for read-only or lightweight work
-3. Use an isolated Git worktree for every concurrent writer
-4. Record creation and state changes in `.pi/worker-workspace-timeline.md`
-5. Monitor unsupported providers through rendered screen reads and bounded polling
-6. Review and verify actual artifacts; worker prose is not acceptance evidence
-7. Archive useful output under `.pi/worker-session-archive/` before cleanup
-8. Finalize the timeline and inspect Git status
-9. Remove only completed clean workspaces and terminals
+1. Create one bounded task per worker.
+2. Preflight the selected runtime.
+3. Use a shared workspace only for read-only or lightweight work.
+4. Use an isolated Git worktree for every concurrent writer.
+5. Record runtime, endpoint/workspace, worker, and delivery identities.
+6. Separate input acceptance, turn start, blocked state, worker completion, and Chief acceptance.
+7. Monitor through lifecycle events or bounded polling and sentinel fallback.
+8. Review and verify actual artifacts.
+9. Archive useful output before cleanup.
+10. Remove only exact completed clean state owned by the task.
 
-Preserve dirty, ambiguous, active-main, and in-progress work.
+Preserve dirty, ambiguous, unreadable, active-main, and in-progress work.

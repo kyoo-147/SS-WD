@@ -1,10 +1,12 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-02T12:20:31.542Z",
+  "generatedAt": "2026-10-02T12:49:17.082Z",
   "tools": {
     "pi": "0.87.1",
     "cmdc": "1.73.4",
     "agy": "1.2.14",
+    "herdr": "herdr 0.8.0-preview.2026-08-04-d78e3d3b5126",
+    "orca": "1.4.215",
     "node": "v24.15.0",
     "git": "git version 2.55.0.windows.3"
   }

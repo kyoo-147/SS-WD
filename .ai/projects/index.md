@@ -2,10 +2,10 @@
 
 This file is an index only. Load only the project context relevant to the current task.
 
-## SS-WD
+## Sky Striker Work Deck (SS-WD)
 
 - File: `.ai/projects/ss-wd.md`
-- Purpose: the SS-WD repository owned by `kyoo-147`.
+- Purpose: the Sky Striker Work Deck repository owned by `kyoo-147`.
 - Priority: inspect the repository and requirements first, then build the smallest reliable MVP.
 
 ## Loading and updates

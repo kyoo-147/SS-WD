@@ -1,6 +1,6 @@
-# SS-WD
+# Sky Striker Work Deck
 
-SS-WD is the public-safe, portable source of truth for the Founder’s Chief of Staff operating rules, provider- and runtime-neutral worker orchestration policy, sanitized configuration templates, and restore guidance.
+Sky Striker Work Deck (SS-WD) keeps the Founder and Chief of Staff working rules, worker and runtime guidance, reviewed public configuration references, and restore instructions in one portable repository.
 
 ## Repository boundary
 

@@ -1,151 +1,121 @@
 <div align="center">
 
-# SS-WD
+# Sky Striker Work Deck
 
-[![CI](https://github.com/kyoo-147/SS-WD/actions/workflows/ci.yml/badge.svg)](https://github.com/kyoo-147/SS-WD/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/tag/kyoo-147/SS-WD?label=Release&style=flat-square)](https://github.com/kyoo-147/SS-WD/tags)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+**One deck for assigning work, watching it move, and checking what comes back.**
 
-**A portable operating system for supervised agent work**
+[![Release](https://img.shields.io/github/v/tag/kyoo-147/SS-WD?label=Release&style=flat-square)](https://github.com/kyoo-147/SS-WD/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-f1f5f9?style=flat-square)](LICENSE)
+[![Security](https://img.shields.io/badge/Security-Policy-334155?style=flat-square)](SECURITY.md)
+[![Contributing](https://img.shields.io/badge/Contributing-Guide-334155?style=flat-square)](CONTRIBUTING.md)
 
-Turn product intent into bounded tasks, visible execution, reviewed evidence, and safely integrated results—without binding the workflow to one terminal host or agent provider.
-
-[Get started](#get-started) · [Runtime adapters](#runtime-neutral-by-design) · [Worker operations](#operate-workers) · [Security](SECURITY.md) · [Contributing](CONTRIBUTING.md)
+[Start here](#start-here) · [How the deck works](#how-the-deck-works) · [Runtime guides](docs/RUNTIME-ADAPTERS.md) · [Restore](docs/RESTORE.md)
 
 </div>
 
-SS-WD stores the first-party operating contract for a technical Chief of Staff and its delegated AI workforce. It defines how the Chief interprets intent, decomposes work, selects workers, supervises isolated processes and worktrees, verifies results, and reports decisions to the Founder.
+**Sky Striker Work Deck**, or **SS-WD**, is the working deck used by a Founder and Chief of Staff to run software work through independent command-line workers. It keeps the brief, task boundaries, worker instructions, review rules, and cleanup discipline in one place.
 
-> **Project status:** SS-WD `v1.1.0` is an operations toolkit, not an agent runtime. Orca and Herdr are supported host patterns, plain CMD and PowerShell are valid fallback hosts, and a lightweight first-party runtime is planned. External tools remain independently installed dependencies.
+The deck is not tied to one app. It can work through Orca, Herdr, PowerShell, CMD, or another terminal host. Those tools provide the workspace; SS-WD keeps the way work is assigned and checked consistent.
 
-## What SS-WD is
+> The public website is planned for `skystriker.navinresearch.com`. The domain is not live yet, so this README remains the current project home.
 
-SS-WD is source-controlled operational infrastructure for AI-assisted work. It provides a shared contract for:
+## Why this exists
 
-- translating informal direction into executable outcomes;
-- assigning bounded work to visible independent agents;
-- isolating concurrent writers in separate Git worktrees;
-- matching task risk and ambiguity to worker capability;
-- adapting the same lifecycle to Orca, Herdr, CMD, PowerShell, or another host;
-- observing progress without confusing input acceptance with task completion;
-- reviewing code, diffs, tests, builds, runtime behavior, and artifacts;
-- preserving a private append-only worker history;
-- cleaning completed workspaces without discarding uncertain work;
-- restoring reviewed configuration without copying secrets.
+Running one coding worker takes little coordination. Running several at once creates the real problems: two workers edit the same file, a terminal goes quiet, a “done” message arrives without proof, or an old worktree gets removed before its changes are safe.
 
-SS-WD is not Orca, Herdr, Firstmate, an agent harness, or a model provider. Those systems can host or inform SS-WD workflows, but none owns the core contract.
+Sky Striker Work Deck gives that work a consistent shape:
 
-## Why SS-WD exists
+- one clear brief for each task;
+- one owner for each area being changed;
+- a separate worktree for every concurrent writer;
+- visible progress and explicit blockers;
+- review of the actual diff and test results;
+- cleanup only after the work is integrated or safely preserved.
 
-Parallel agents are useful, but unmanaged parallelism creates predictable failures: tasks overlap, terminals stall, provider receipts are mistaken for completion, worktrees accumulate, and private machine state leaks into public repositories.
+The Founder sets direction, constraints, and taste. The Chief of Staff turns that direction into bounded work, follows each worker, checks what comes back, and raises only decisions that matter.
 
-SS-WD addresses those failures with explicit boundaries:
-
-- **Visible execution:** every delegated process has an inspectable endpoint.
-- **Exclusive ownership:** each concurrent writer owns a separate mutation boundary.
-- **Evidence-led acceptance:** worker prose never replaces executable verification.
-- **Bounded authority:** workers receive only the context and permissions required for one task.
-- **Truthful status:** unresolved work remains `UNKNOWN`, `BLOCKED`, or `UNVERIFIED`.
-- **Safe cleanup:** dirty, active, ambiguous, or unintegrated work is preserved.
-- **Portable control:** host-specific mechanics stay behind runtime adapters.
-- **Public-safe recovery:** Git stores portable rules and allowlisted metadata, not workstation state.
-
-## Runtime-neutral by design
-
-The stable layer is the worker lifecycle, not the product that renders a terminal.
+## How the deck works
 
 ```text
-INTENT
+DIRECTION
   -> RESEARCH
-  -> DECOMPOSE
+  -> BREAK DOWN THE WORK
   -> ASSIGN
-  -> CREATE ENDPOINT
-  -> SEND
-  -> OBSERVE
-  -> CAPTURE
+  -> OPEN A WORKSPACE
+  -> WATCH PROGRESS
   -> REVIEW
   -> INTEGRATE
   -> VERIFY
   -> ARCHIVE
-  -> CLEAN
+  -> CLEAN UP
   -> REPORT
 ```
 
-Every runtime adapter must implement or explicitly refuse these operations:
+A worker and the place it runs are separate choices:
 
-| Operation | Required outcome |
-| --- | --- |
-| `preflight` | Prove availability, identity, version/capabilities, and authentication needed for the task. |
-| `create` | Return a stable endpoint identity and, for writers, an isolated workspace identity. |
-| `send` | Return input acceptance separately from submission or turn-start evidence. |
-| `observe` | Report lifecycle events when available, otherwise bounded polling evidence. |
-| `capture` | Return bounded output with cursor/timestamp provenance. |
-| `interrupt` | Use a runtime-supported control and report confirmed versus unconfirmed cancellation. |
-| `close` | Stop only the exact owned endpoint and preserve uncertain work. |
-| `cleanup` | Remove state only after integration or explicit safe preservation is verified. |
+- **Worker:** the command-line tool and model doing the task.
+- **Runtime:** the terminal or workspace host showing and controlling that task.
 
-Current host guidance:
+That separation matters. Orca is useful today, Herdr can provide lighter native terminal control, and plain PowerShell or CMD remains a valid fallback. A smaller Navin Research runtime can be built later without rewriting the whole working method.
 
-| Host | Current posture | Strongest progress signal |
+### Runtime choices
+
+| Runtime | Best fit today | How progress is read |
 | --- | --- | --- |
-| Herdr | Supported pattern; native lifecycle-capable | pane agent state/events, with polling fallback |
-| Orca | Supported pattern; host-managed terminals/worktrees | durable send stages, terminal reads, host lifecycle |
-| PowerShell | Portable fallback | process handle, exit code, redirected log/result and sentinel |
-| CMD | Portable fallback | PID/process query, exit code wrapper, log/result and sentinel |
-| Future SS-WD runtime | Planned | must satisfy the same adapter contract |
+| Herdr | Lightweight visible terminal work with native pane state | Pane state and events, with polling as a fallback |
+| Orca | Managed worktrees and rich terminal workflows | Terminal handles, send receipts, cursor reads, and host state |
+| PowerShell | Portable Windows process runner | Process identity, exit code, logs, result file, and completion marker |
+| CMD | Minimal Windows fallback | Wrapper-owned PID, logs, exit code, and completion marker |
+| SS-WD runtime | Later | Will follow the same task and evidence rules |
 
-See [`docs/RUNTIME-ADAPTERS.md`](docs/RUNTIME-ADAPTERS.md), [`docs/platforms/herdr.md`](docs/platforms/herdr.md), [`docs/platforms/orca.md`](docs/platforms/orca.md), and [`docs/platforms/shell.md`](docs/platforms/shell.md).
+Detailed guides:
 
-The adapter boundary is informed by mature multi-backend systems such as [Firstmate](https://github.com/kunchenguid/firstmate), particularly its separation between task lifecycle, worktree ownership, terminal backends, and harness-specific behavior. SS-WD does not vendor or depend on Firstmate source.
+- [`docs/RUNTIME-ADAPTERS.md`](docs/RUNTIME-ADAPTERS.md)
+- [`docs/platforms/herdr.md`](docs/platforms/herdr.md)
+- [`docs/platforms/orca.md`](docs/platforms/orca.md)
+- [`docs/platforms/shell.md`](docs/platforms/shell.md)
 
-## Core capabilities
+The multi-runtime design was informed by [Firstmate](https://github.com/kunchenguid/firstmate), especially its separation of worker tasks, worktrees, terminal backends, and tool-specific behavior. SS-WD does not copy or bundle Firstmate.
 
-### Chief of Staff system
+## What is in this repository
 
-- Founder/Chief identity and decision boundaries;
-- research, execution, review, monitoring, and reporting protocols;
-- progressive project context loading;
-- provider- and host-neutral task contracts;
-- evidence-based integration and cleanup.
+### Working rules
 
-### Worker orchestration policy
+- the Founder and Chief of Staff relationship;
+- research, execution, review, monitoring, and reporting rules;
+- worker and model routing notes;
+- runtime-specific operating guides;
+- private worker-history and cleanup conventions.
 
-- visible workers and stable endpoint identities;
-- one writer per file/package collision boundary;
-- lifecycle events where available;
-- completion sentinels and bounded polling where lifecycle support is absent;
-- private worker ledger and transcript archive;
-- no silent provider or runtime fallback.
+### Safe setup references
 
-### Portable configuration
+- reviewed Pi settings with private values removed;
+- approved generic worker-profile hashes;
+- selected tool versions;
+- templates for workers, reviewers, and the private timeline;
+- restore instructions for a new machine.
 
-- allowlisted sanitized Pi settings;
-- allowlisted agent-profile names and content hashes;
-- generic worker and reviewer templates;
-- runtime version inventory;
-- snapshot generation and public-safety verification scripts.
+### Public safety checks
 
-### Public safety
+- exact checks of files already staged in Git;
+- checks of tracked and untracked public candidates;
+- allowlisted snapshot fields and profile names;
+- detection for common credentials, private keys, machine paths, and binary files;
+- regression tests for known failure cases.
 
-- default exclusion of credentials, sessions, memories, transcripts, databases, and evidence;
-- staged-index and working-tree scanning;
-- common credential and machine-path detection;
-- allowlist-based snapshot generation;
-- human diff review as a required final gate.
+## Start here
 
-## Get started
+### Requirements
 
-### Prerequisites
-
-Install only the tools required by the runtime and workers you choose:
+Use only the tools needed for your setup:
 
 - Git;
 - Node.js 24 or newer;
-- at least one worker CLI;
+- at least one supported command-line worker;
 - optionally Orca or Herdr;
 - optionally PowerShell on Windows.
 
-Verify only the commands relevant to your environment:
+Check what is installed:
 
 ```powershell
 git --version
@@ -157,9 +127,17 @@ herdr --version
 orca --version
 ```
 
-A missing runtime or worker must not trigger an undocumented fallback.
+A missing tool is reported as a blocker. SS-WD does not quietly swap in another provider or runtime.
 
-### Initialize private worker tracking
+### Read the project in this order
+
+1. [`AGENTS.md`](AGENTS.md)
+2. [`.ai/identity.md`](.ai/identity.md)
+3. [`.ai/working-style.md`](.ai/working-style.md)
+4. [`.ai/projects/index.md`](.ai/projects/index.md)
+5. only the project, protocol, skill, and runtime guide needed for the current task
+
+### Set up the private work log
 
 ```powershell
 New-Item -ItemType Directory -Force .pi | Out-Null
@@ -167,17 +145,9 @@ Copy-Item templates/worker-workspace-timeline.md .pi/worker-workspace-timeline.m
 New-Item -ItemType Directory -Force .pi/worker-session-archive | Out-Null
 ```
 
-Never commit the populated timeline or transcript archive.
+The populated timeline and worker output stay local. They must not be committed.
 
-### Load the operating contract
-
-1. [`AGENTS.md`](AGENTS.md)
-2. [`.ai/identity.md`](.ai/identity.md)
-3. [`.ai/working-style.md`](.ai/working-style.md)
-4. [`.ai/projects/index.md`](.ai/projects/index.md)
-5. task-relevant project, protocol, skill, and runtime-adapter files
-
-### Run validation
+### Run the checks
 
 No dependency installation is required.
 
@@ -186,35 +156,45 @@ npm test
 npm run check
 ```
 
-## Operate workers
+## Running workers
 
-1. Define the objective, scope, exclusions, expected evidence, and definition of done.
-2. Select the worker independently from the runtime host.
-3. Preflight the chosen runtime and record its exact capabilities.
-4. Give every concurrent writer an isolated Git worktree.
-5. Record endpoint and workspace identities in `.pi/worker-workspace-timeline.md`.
-6. Separate input acceptance, turn start, ongoing activity, blocked state, and completion.
-7. Review actual artifacts and run the relevant gates.
-8. Archive useful output and remove only exact, completed, clean owned state.
+Each assignment should state:
 
-When a project restricts workers to Command Code and Antigravity, preserve these literal invocations:
+- what outcome is wanted;
+- what the worker owns;
+- what it must not touch;
+- what evidence it must return;
+- what “done” means.
+
+For every worker:
+
+1. Check that the selected runtime is available.
+2. Create a visible endpoint.
+3. Give concurrent writers separate Git worktrees.
+4. Record the exact workspace and endpoint identities.
+5. Distinguish accepted input from work that actually started.
+6. Follow progress with runtime events or bounded polling.
+7. Inspect the files, diff, tests, build, or running result yourself.
+8. Archive useful output and remove only clean state owned by that task.
+
+When Command Code or Antigravity is explicitly required, keep these exact launch commands:
 
 ```text
 cmdc --yolo
 agy --dangerously-skip-permissions
 ```
 
-A send receipt is not completion. Unsupported lifecycle hosts require a unique final marker:
+For runtimes without reliable completion events, require a final marker:
 
 ```text
 WORKER_DONE:<role>:<task-id>:SUCCEEDED|BLOCKED|FAILED
 ```
 
-The marker reports worker state only; the Chief still verifies the result.
+The marker tells the Chief what the worker believes happened. It does not replace review.
 
-## Refresh the public snapshot
+## Public snapshot
 
-The manifest at [`config/snapshot-policy.json`](config/snapshot-policy.json) is the allowlist. Review it before approving a new setting or profile name.
+The snapshot manifest is [`config/snapshot-policy.json`](config/snapshot-policy.json). Only fields and profile names listed there are eligible for export.
 
 ```powershell
 npm run snapshot
@@ -224,59 +204,57 @@ git status --short
 git diff --cached
 ```
 
-The verifier checks both staged Git blobs and working-tree candidates. Human review remains required because pattern matching cannot prove that arbitrary public content is safe.
+The verifier reads the exact blobs staged in Git as well as working-tree candidates. A passing scan still needs a human diff review.
 
-## Repository layout
+Read [`docs/PUBLIC-SNAPSHOT-BOUNDARY.md`](docs/PUBLIC-SNAPSHOT-BOUNDARY.md) before adding anything to the snapshot.
+
+## Repository map
 
 ```text
 .
-├── .ai/                         # Chief identity, protocols, skills, project context
-├── .github/workflows/           # Automated validation
-├── config/                      # Launch and snapshot policies
-├── docs/                        # Runtime, restore, security-boundary guidance
-├── scripts/                     # Snapshot and verification tools
-├── snapshots/                   # Sanitized allowlisted metadata
-├── templates/                   # Generic worker and private-ledger templates
-├── tests/                       # Regression tests for safety and documentation
-├── AGENTS.md                    # Permanent operating rules
-├── CONTRIBUTING.md              # Contribution contract
-├── SECURITY.md                  # Vulnerability reporting and support policy
+├── .ai/                         # Project rules, protocols, and working skills
+├── .github/workflows/           # Repository checks
+├── config/                      # Worker launch and snapshot policy
+├── docs/                        # Runtime, restore, and public-boundary guides
+├── scripts/                     # Snapshot and verification scripts
+├── snapshots/                   # Reviewed public metadata
+├── templates/                   # Worker, reviewer, and timeline templates
+├── tests/                       # Regression tests
+├── AGENTS.md                    # Entry point for agents working in this repo
+├── CONTRIBUTING.md              # Contribution guide
+├── SECURITY.md                  # Security and private reporting policy
 └── LICENSE                      # MIT license
 ```
 
-## Status and roadmap
+## Current state
 
-### Available in `v1.1.0`
+Available now:
 
-- provider- and runtime-neutral operating contract;
-- Orca, Herdr, PowerShell, and CMD adapter guidance;
-- allowlist-based snapshot generation;
-- staged-index plus working-tree public-safety verification;
-- regression tests and CI;
-- contribution, security, and license documents.
+- the Founder and Chief of Staff working contract;
+- worker assignment, monitoring, review, and cleanup rules;
+- Orca, Herdr, PowerShell, and CMD guidance;
+- allowlisted public snapshots;
+- staged-file safety verification;
+- regression tests and repository checks.
 
-### Planned
+Planned:
 
-- executable adapter conformance tests for additional hosts;
-- machine-readable runtime capability discovery;
-- signed release artifacts and integrity manifests;
-- benchmark-backed worker routing;
-- a lightweight first-party SS-WD runtime implementing the same adapter contract.
+- executable compatibility tests for more runtimes;
+- clearer machine-readable runtime capabilities;
+- signed release files;
+- measured worker-routing updates;
+- a lightweight Navin Research runtime for the same deck.
 
-Roadmap entries are direction, not shipped capability.
-
-## Public snapshot boundary
-
-Read [`docs/PUBLIC-SNAPSHOT-BOUNDARY.md`](docs/PUBLIC-SNAPSHOT-BOUNDARY.md) before expanding snapshot scope. If sensitive material reaches GitHub, stop publishing, rotate affected credentials, remove live refs, follow GitHub's sensitive-data removal process, and verify the cleaned repository.
+Planned work is direction, not a claim that it already ships.
 
 ## Contributing
 
-See [`CONTRIBUTING.md`](CONTRIBUTING.md). Every change must preserve visible execution, exclusive mutation ownership, fail-closed status reporting, public-safe metadata, and executable verification.
+Read [`CONTRIBUTING.md`](CONTRIBUTING.md). Keep changes focused, preserve the public/private boundary, and include the commands used to verify the work.
 
 ## Security
 
-See [`SECURITY.md`](SECURITY.md). Do not report suspected credentials or exploitable snapshot bypasses in a public issue.
+Read [`SECURITY.md`](SECURITY.md). Use GitHub Private Vulnerability Reporting for credentials, snapshot bypasses, or unsafe process-control findings.
 
 ## License
 
-MIT—see [`LICENSE`](LICENSE).
+MIT. See [`LICENSE`](LICENSE).

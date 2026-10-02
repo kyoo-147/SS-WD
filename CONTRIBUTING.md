@@ -1,6 +1,6 @@
-# Contributing to SS-WD
+# Contributing to Sky Striker Work Deck
 
-Thank you for improving SS-WD. This repository is public operational infrastructure, so correctness, portability, and privacy matter more than adding breadth quickly.
+Thank you for improving Sky Striker Work Deck. Keep changes practical, portable, and safe to publish; adding more machinery is not a goal by itself.
 
 ## Before changing code
 

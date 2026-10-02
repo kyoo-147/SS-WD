@@ -1,8 +1,7 @@
-name: CI
+name: Project checks
 
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
   pull_request:
 
 permissions:
@@ -26,7 +25,7 @@ jobs:
         with:
           node-version: 24
 
-      - name: Validate source, tests, and public snapshot
+      - name: Run project checks
         run: npm run check
 
       - name: Check whitespace

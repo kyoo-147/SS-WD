@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-02T12:20:31.531Z",
+  "note": "First-party portable metadata only. External product implementations, credentials, memories, binaries and transcripts are excluded.",
+  "piAgentProfiles": [
+    {
+      "name": "luna-reviewer.md",
+      "sha256": "5b6a07d5985544801906d954efb4ed106b7eddc21573cb92f896a0116338a0c9",
+      "bytes": 824
+    },
+    {
+      "name": "luna-worker.md",
+      "sha256": "4ca775e9fd472affd7a9d275dae1f8c06333215c01ddeb8afdda1f8c63356341",
+      "bytes": 728
+    },
+    {
+      "name": "reviewer.md",
+      "sha256": "ec4f04a909ff141fc9ff3e2f80c6dbfbf1650a1607737803c418d10af5b12f37",
+      "bytes": 455
+    },
+    {
+      "name": "worker.md",
+      "sha256": "c8b47f6567d76c67446fcc09ac40b42765938bb5f1fbd8f078580740440a8c2f",
+      "bytes": 575
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+.pi/
+.commandcode/
+
+# Private/runtime state must never enter this public repository.
+.env
+.env.*
+!.env.example
+auth.json
+trust.json
+run-history.jsonl
+*.sqlite
+*.sqlite3
+*.db
+*.log
+sessions/
+memories/
+transcripts/
+evidence/
+private/
+secrets/
+node_modules/
+.DS_Store
+Thumbs.db

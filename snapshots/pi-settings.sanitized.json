@@ -1,0 +1,12 @@
+{
+  "shellPath": "${HOME}/.pi/agent/win-git-bash/bin/bash.exe",
+  "lastChangelogVersion": "0.87.1",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.6-luna",
+  "defaultThinkingLevel": "medium",
+  "packages": [
+    "npm:pi-subagents@0.62.0",
+    "npm:@tian.zuo/pi-usage"
+  ],
+  "theme": "light"
+}

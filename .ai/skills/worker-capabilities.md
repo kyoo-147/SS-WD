@@ -42,7 +42,7 @@ Current quota is not durable knowledge. Query the active provider account status
 
 ## Command Code
 
-Status: `VERIFIED` through a visible terminal; some hosts cannot report provider lifecycle, so use sentinel monitoring.
+Status: `VERIFIED` through headless and visible-terminal runs; account-default paid usage may still be `BLOCKED` by credits while explicitly free models remain available. Some hosts cannot report provider lifecycle, so use sentinel monitoring.
 
 The installed CLI exposes many model families. Useful routes from its live model descriptions include:
 
@@ -59,13 +59,19 @@ The installed CLI exposes many model families. Useful routes from its live model
 - `google/gemini-3.8-flash`: fast general reasoning;
 - `meta/muse-spark-1.2`: coding-oriented large-codebase work.
 
-These mappings are `INFERRED` from the CLI descriptions until benchmarked on AgentKid tasks. Query `commandcode --list-models` before relying on an exact model ID.
+Verified native-free routes:
+
+- `poolside/laguna-s-2.1-free`: coding and long-horizon implementation;
+- `inclusionai/ling-3.1-flash:free`: fast coding, review, and tool use;
+- `stealth/space-bunny-alpha`: free long-context fallback.
+
+The free labels and descriptions come from the live Command Code catalog. Each route above has passed a headless smoke test, but the task-quality mappings remain `INFERRED` until benchmarked on representative project work. Query `commandcode --list-models` and run a live smoke before dispatch.
 
 ## Antigravity (`agy`)
 
 Status: `VERIFIED` through a visible terminal using Google AI Pro; some hosts cannot report provider lifecycle, so use sentinel monitoring.
 
-Installed model routes:
+Installed model routes from the live `agy models` catalog:
 
 - `gemini-3.8-flash-high`: fast triage, orchestration advice, moderate debugging, and architecture exploration;
 - `gemini-3.8-flash-medium`: bounded frontend/backend/test work;
@@ -73,11 +79,11 @@ Installed model routes:
 - `gemini-3.7-flash-*`: economical discovery, extraction, and test triage;
 - `gemini-3.1-pro-high`: deep research, large-context synthesis, and difficult audits;
 - `gemini-3.1-pro-low`: structured planning and integration verification;
-- `claude-sonnet-4-6`: non-trivial implementation, refactoring, and review;
-- `claude-opus-4-6-thinking`: high-uncertainty architecture and high-blast-radius review;
+- `claude-sonnet-5-5-high`: non-trivial implementation, refactoring, and review;
+- `claude-opus-5-5-high`: high-uncertainty architecture and high-blast-radius review;
 - `gpt-oss-120b-medium`: isolated or privacy-sensitive transformations and fallback analysis.
 
-These task mappings are `INFERRED`; reasoning-budget semantics, latency, tool reliability, context limits, and cost must be measured before high-risk routing. Query `agy models` before dispatch.
+Availability has been smoke-verified for `gemini-3.8-flash-high`, `gemini-3.8-flash-low`, `gemini-3.1-pro-high`, and `claude-sonnet-5-5-high`. These task mappings remain `INFERRED`; reasoning-budget semantics, latency, tool reliability, context limits, and quota must be measured before high-risk routing. Query `agy models` before dispatch.
 
 ## Routing decision
 
@@ -90,3 +96,5 @@ Before dispatch, answer:
 5. What is the cheapest verified model capable of producing reliable evidence?
 
 Use strong models for ambiguity, architecture, security, and review. Use fast models for scanning, extraction, mechanical editing, and test execution. Upgrade worker capability when evidence quality is insufficient; change runtime only through an explicit, allowed routing decision.
+
+Apply the three-tier availability policy in `.ai/skills/model-routing.md`: Command Code then Antigravity, then the Navin `free` combo, then verified agent-native free models. A code/test/tool failure is not quota failure and must not trigger model fallback.

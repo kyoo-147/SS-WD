@@ -9,7 +9,7 @@
 [![Security](https://img.shields.io/badge/Security-Policy-334155?style=flat-square)](SECURITY.md)
 [![Contributing](https://img.shields.io/badge/Contributing-Guide-334155?style=flat-square)](CONTRIBUTING.md)
 
-[Start here](#start-here) · [How the deck works](#how-the-deck-works) · [Runtime guides](docs/RUNTIME-ADAPTERS.md) · [Restore](docs/RESTORE.md)
+[Start here](#start-here) · [How the deck works](#how-the-deck-works) · [Runtime guides](docs/RUNTIME-ADAPTERS.md) · [Agent routing](docs/CODING-AGENT-ROUTING.md) · [Restore](docs/RESTORE.md)
 
 </div>
 

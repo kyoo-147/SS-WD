@@ -93,3 +93,18 @@ test('fails closed on binary public candidates', () => {
     rmSync(root, { recursive: true, force: true })
   }
 })
+
+test('fails closed on a standalone Command Code provider token in the index and working tree', () => {
+  const root = fixture()
+  try {
+    const token = ['user', 'C'.repeat(48)].join('_')
+    writeFileSync(join(root, 'candidate.txt'), `${token}\n`)
+    execFileSync('git', ['add', 'candidate.txt'], { cwd: root })
+    const result = run(root)
+    assert.notEqual(result.status, 0)
+    assert.match(result.stderr, /index:candidate\.txt: Command Code token/)
+    assert.match(result.stderr, /worktree:candidate\.txt: Command Code token/)
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})

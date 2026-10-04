@@ -27,6 +27,7 @@ const contentRules = [
   { name: 'AWS access key', pattern: /\bAKIA[0-9A-Z]{16}\b/ },
   { name: 'npm token', pattern: /\bnpm_[A-Za-z0-9]{20,}\b/ },
   { name: 'Slack token', pattern: /\bxox[baprs]-[A-Za-z0-9-]{20,}\b/ },
+  { name: 'Command Code token', pattern: /\buser_[A-Za-z0-9]{20,}\b/ },
   { name: 'bearer token', pattern: /Authorization\s*:\s*Bearer\s+[A-Za-z0-9._~-]{12,}/i },
   {
     name: 'generic credential assignment',

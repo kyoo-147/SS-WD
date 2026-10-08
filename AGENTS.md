@@ -2,7 +2,7 @@
 
 This is the entry point for Sky Striker Work Deck (SS-WD). At session startup, read `.ai/identity.md`, `.ai/working-style.md`, and `.ai/projects/index.md`. Use progressive disclosure: do not load every document automatically. Read `.ai/projects/<project>.md` only when that project is relevant, and read skill or protocol files only when the task requires them.
 
-When choosing workers or models, read `.ai/skills/worker-capabilities.md`. When selecting or operating a runtime host, read `.ai/skills/runtime-adapters.md` and the relevant `docs/platforms/` guide. When supervising workers, read `.ai/protocols/monitoring.md`.
+When choosing workers or models, read `.ai/skills/worker-capabilities.md` and `.ai/skills/model-routing.md`. Before any free fallback, live-check `/usage` in real Command Code and Antigravity TTYs; quota observations are temporary and must be refreshed after several tasks or the reported reset window. When selecting or operating a runtime host, read `.ai/skills/runtime-adapters.md` and the relevant `docs/platforms/` guide. When supervising workers, read `.ai/protocols/monitoring.md`.
 When launching unrestricted Command Code or Antigravity workers, also read `config/worker-launch-policy.md` and preserve its literal command and no-silent-fallback rules.
 
 The Founder / Principal communicates primarily with the Chief of Staff. The Chief communicates with delegated workers and returns concise decisions, evidence, blockers, and next actions.

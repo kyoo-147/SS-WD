@@ -42,22 +42,16 @@ Current quota is not durable knowledge. Query the active provider account status
 
 ## Command Code
 
-Status: `VERIFIED` through headless and visible-terminal runs; account-default paid usage may still be `BLOCKED` by credits while explicitly free models remain available. Some hosts cannot report provider lifecycle, so use sentinel monitoring.
+Status: `VERIFIED` through headless CLI runs and the Provider API. `deepseek/deepseek-v4-flash` and `deepseek/deepseek-v4-pro` passed live headless checks, and Flash passed a live Provider API tool-call check. Authentication, credits, windows, and model access remain drift-prone, so preflight every dispatch. Some hosts cannot report provider lifecycle, so use sentinel monitoring.
 
-The installed CLI exposes many model families. Useful routes from its live model descriptions include:
+The installed CLI exposes many model families, but Founder policy restricts the Command Code Tier 1 route to DeepSeek:
 
 - `deepseek/deepseek-v4-flash`: fast default reasoning, reconnaissance, and bounded review;
 - `deepseek/deepseek-v4-pro`: deeper long-context reasoning;
-- `moonshotai/kimi-k3` or `kimi-k2.7-code`: long-horizon coding and large-context work;
-- `z-ai/glm-5.3-flash`: fast, affordable coding;
-- `zai-org/glm-5.3`: frontier coding and difficult technical analysis;
-- `minimaxai/minimax-m3`: agentic coding and multimodal work;
-- `claude-sonnet-5`: strong speed/intelligence balance;
-- `claude-opus-5` or `claude-fable-5-1`: demanding reasoning and long-horizon agents;
-- `gpt-6-astra` or `gpt-5.6-sol`: high-complexity reasoning and implementation;
-- `gpt-5.6-luna` or `gpt-5.4-mini`: economical bounded execution;
-- `google/gemini-3.8-flash`: fast general reasoning;
-- `meta/muse-spark-1.2`: coding-oriented large-codebase work.
+- `deepseek/deepseek-v4-flash-fast`: latency-sensitive bounded work; catalog-listed, not yet accepted as a default route;
+- `deepseek/deepseek-v4.1-flash`: vision-capable UI or multimodal work; catalog-listed, benchmark before high-risk use.
+
+The Provider API is OpenAI Chat Completions and Responses compatible for the live DeepSeek catalog. Read `.ai/skills/command-code-provider.md` before wiring it into another client. Do not expose or commit the shared API key.
 
 Verified native-free routes:
 
@@ -66,6 +60,8 @@ Verified native-free routes:
 - `stealth/space-bunny-alpha`: free long-context fallback.
 
 The free labels and descriptions come from the live Command Code catalog. Each route above has passed a headless smoke test, but the task-quality mappings remain `INFERRED` until benchmarked on representative project work. Query `commandcode --list-models` and run a live smoke before dispatch.
+
+Before fallback, run `/usage` inside a real Command Code TTY and inspect every displayed limit. A shorter window can be available while a weekly limit still blocks work. Recheck after several tasks and reset windows. Never enable `/extra` without explicit Founder approval.
 
 ## Antigravity (`agy`)
 
@@ -79,11 +75,13 @@ Installed model routes from the live `agy models` catalog:
 - `gemini-3.7-flash-*`: economical discovery, extraction, and test triage;
 - `gemini-3.1-pro-high`: deep research, large-context synthesis, and difficult audits;
 - `gemini-3.1-pro-low`: structured planning and integration verification;
-- `claude-sonnet-5-5-high`: non-trivial implementation, refactoring, and review;
-- `claude-opus-5-5-high`: high-uncertainty architecture and high-blast-radius review;
+- `claude-sonnet-4-6`: non-trivial implementation, refactoring, and review;
+- `claude-opus-4-6-thinking`: high-uncertainty architecture and high-blast-radius review;
 - `gpt-oss-120b-medium`: isolated or privacy-sensitive transformations and fallback analysis.
 
-Availability has been smoke-verified for `gemini-3.8-flash-high`, `gemini-3.8-flash-low`, `gemini-3.1-pro-high`, and `claude-sonnet-5-5-high`. These task mappings remain `INFERRED`; reasoning-budget semantics, latency, tool reliability, context limits, and quota must be measured before high-risk routing. Query `agy models` before dispatch.
+Availability has been smoke-verified for selected AGY routes, but exact IDs and access drift. These task mappings remain `INFERRED`; reasoning-budget semantics, latency, tool reliability, context limits, and quota must be measured before high-risk routing. Query `agy models`, then run `/usage` in a real AGY TTY before dispatch.
+
+Antigravity quota can be split by model family and enforced by both weekly and shorter windows. Check the group containing the intended model; do not infer that all AGY models are available from one catalog response or one nonzero balance. Recheck after several tasks and reset windows.
 
 ## Routing decision
 

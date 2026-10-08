@@ -16,7 +16,7 @@ A worker that discovers a code defect, failing test, denied operation, or invali
 
 | Harness | Headless | Model pin | Unrestricted mode | Worktree support | Model discovery | Operational role |
 | --- | --- | --- | --- | --- | --- | --- |
-| Command Code | `cmdc -p` | `-m` / `--model` | `--yolo` | `--worktree` | `--list-models` | First Tier 1 candidate; Tier 3 native-free provider |
+| Command Code | `cmdc -p` | `-m` / `--model` | `--yolo` | `--worktree` | `--list-models` | First Tier 1 candidate; Founder-selected DeepSeek models only; Tier 3 native-free provider |
 | Antigravity | `agy -p` | `--model` | `--dangerously-skip-permissions` | Project UI supports new-worktree mode; external runtime isolation remains authoritative | `agy models` | Second Tier 1 candidate; strong Google/Claude model access |
 | OpenCode | `opencode run` | `--model provider/model` | `--auto` | Use runtime-managed Git worktree for concurrent writers | `opencode models` | Tier 2 Navin client; optional Tier 3 OpenCode Console free client |
 | Claude Code | `claude -p` | `--model` | `--dangerously-skip-permissions` | Use runtime-managed Git worktree for concurrent writers | CLI/config catalog | Direct Navin client and manual diagnostic route; not in the default three-tier worker order |
@@ -31,9 +31,12 @@ The table separates verified availability from inferred task fit.
 
 | Route | Availability requirement | Suggested work | Epistemic status |
 | --- | --- | --- | --- |
-| Command Code task-selected model | Authenticated account, usable credits, and exact ID in `--list-models` | Tier 1 architecture, implementation, review, scan, or UI work according to the profile map | Catalog availability verified live; task fit inferred until benchmarked |
+| `cmdc/deepseek/deepseek-v4-flash` | Authenticated account, usable credits, exact ID in `--list-models` | Default implementation, general work, scanning, and triage | CLI and Provider API tool call verified live; task fit still requires acceptance |
+| `cmdc/deepseek/deepseek-v4-pro` | Authenticated account, usable credits, exact ID in `--list-models` | Architecture, security, and difficult review | CLI verified live; task fit still requires acceptance |
+| `cmdc/deepseek/deepseek-v4.1-flash` | Exact ID in `--list-models` and a passing multimodal smoke | Vision-capable UI or multimodal work | Catalog-listed; not yet accepted as a default high-risk route |
 | `agy/gemini-3.1-pro-high` | Exact slug in `agy models`; smoke succeeds | Architecture, research synthesis, security/review | Availability verified in a prior live pass; task fit inferred |
-| `agy/claude-sonnet-5-5-high` | Exact slug in `agy models`; smoke succeeds | Implementation, refactoring, review, UI coding | Availability verified in a prior live pass; task fit inferred |
+| `agy/claude-sonnet-4-6` | Exact slug in `agy models`; smoke succeeds | Non-trivial implementation, refactoring, review, UI coding | Catalog availability is drift-prone; task fit inferred |
+| `agy/gemini-3.8-flash-medium` | Exact slug in `agy models`; smoke succeeds | Bounded implementation and tests | Catalog availability is drift-prone; task fit inferred |
 | `agy/gemini-3.8-flash-high` | Exact slug in `agy models`; smoke succeeds | Balanced general work, triage, orchestration | Availability verified in a prior live pass; task fit inferred |
 | `agy/gemini-3.8-flash-low` | Exact slug in `agy models`; smoke succeeds | Scanning, extraction, mechanical edits | Availability verified in a prior live pass; task fit inferred |
 | `9router/free` | Authenticated Navin gateway and passing smoke | Gateway-managed coding fallback | Combo membership and quality are live state |
@@ -44,11 +47,35 @@ The table separates verified availability from inferred task fit.
 
 Official OpenCode Console documentation currently advertises free IDs including `laguna-s-2.1-free`, `ling-3.0-tiny-free`, `longcat-2.0-free`, `north-mini-code-free`, `nemotron-3-ultra-free`, and `deepseek-v4-flash-free`. Do not dispatch them merely because they appear in documentation; the local provider must be connected and the live CLI must list them.
 
+## Command Code Provider API
+
+The Command Code GOAT plan exposes an OpenAI-compatible Provider API at `https://api.commandcode.ai/provider/v1`. Use it to make the selected DeepSeek models available to compatible clients such as OpenCode, MiMo Code, OMP, Crush, Kimi Code, Grok Build, and—after server-side validation—a custom Navin 9Router provider node.
+
+Prefer the `cmdc` harness for coding because its tool repair and context optimizations are not inherited automatically by generic API clients. Do not route DeepSeek through Claude Code: Claude Code uses the Anthropic Messages wire, while Command Code serves DeepSeek through Chat Completions and, where the live catalog advertises it, Responses.
+
+Never store a real API key in this repository. Read `.ai/skills/command-code-provider.md` for the compatibility matrix, sanitized config patterns, and required chat/tool-call preflight.
+
+## Live quota preflight
+
+Catalog presence is not availability. Before each new Tier 1 worker turn:
+
+1. Open Command Code in a real TTY and run `/usage`.
+2. Open Antigravity in a real TTY and run `/usage` before declaring paid Tier 1 unavailable.
+3. Inspect every displayed window and the quota group containing the intended model. Command Code can be blocked by a weekly limit even when its shorter window is open. Antigravity can expose separate Gemini and Claude/GPT groups, each with weekly and shorter-window enforcement.
+4. Record the observation privately with timestamp, remaining/reset window, intended group/model, and fallback reason.
+5. Recheck both providers after several tasks, after meaningful elapsed time, and after reported reset windows.
+
+`/usage` is an interactive slash command, not a `cmdc --usage` or `agy --usage` shell flag. If Git Bash invokes `orca terminal send`, prefix that Orca command with `MSYS_NO_PATHCONV=1`; otherwise MSYS can rewrite `/usage` as a Windows path.
+
+Use the smallest capable model in the first paid provider with current capacity. Move to Navin or agent-native free models only while both paid providers are currently unavailable. Never enable Command Code `/extra`, upgrade an account, or incur pay-as-you-go charges without explicit Founder approval.
+
+The first-party tiered runner accepts operator-attested usage states because it cannot safely scrape interactive quota screens. A normal Tier 1 execution fails closed unless both `-CommandCodeUsageState` and `-AntigravityUsageState` are supplied as `available` or `blocked`. Explicit `-StartTier 2` and `-StartTier 3` are deliberate recovery/test paths.
+
 ## Dispatch algorithm
 
 1. Classify task profile: architecture, implementation, review, scan, UI, or general.
 2. Select runtime and workspace independently. Create an isolated worktree for every concurrent writer.
-3. Preflight the candidate CLI, auth/quota if supported, exact model slug, and headless invocation.
+3. Perform the live TTY quota preflight for both paid providers, then verify candidate CLI, authentication, exact model slug, and invocation shape.
 4. Launch in the Founder-selected unrestricted mode.
 5. Retry transient network/429/5xx failures up to three times with 1s, 2s, and 4s backoff.
 6. On provider/model unavailability, move to the next candidate and then next tier.
@@ -64,6 +91,7 @@ Official OpenCode Console documentation currently advertises free IDs including 
 - Never let fallback change workspace identity, path ownership, or completion criteria.
 - A new model invocation is a new worker turn and must be recorded as such.
 - Preserve dirty, ambiguous, or unreadable worktrees rather than cleaning optimistically.
+- Prefer visible interactive TUIs when inspection and follow-up matter. Disclose buffered headless mode; a blank terminal is not lifecycle evidence.
 
 ## Executable entry point
 
@@ -71,7 +99,9 @@ Official OpenCode Console documentation currently advertises free IDs including 
 pwsh -File .\tools\invoke-tiered-worker.ps1 `
   -Prompt "Implement the requested change and run acceptance checks" `
   -TaskProfile implementation `
-  -WorkingDirectory D:\path\to\isolated-worktree
+  -WorkingDirectory D:\path\to\isolated-worktree `
+  -CommandCodeUsageState available `
+  -AntigravityUsageState available
 ```
 
 Useful controls:
@@ -81,12 +111,17 @@ Useful controls:
 - `-StartTier 3`: test only agent-native free candidates.
 - `-MaxAttempts 3`: bounded same-candidate retry.
 - `-EvidencePath <private-path>`: write a secret-free attempt ledger.
+- `-CommandCodeUsageState` / `-AntigravityUsageState`: operator-attested `available` or `blocked` values from fresh TTY `/usage` views; required for normal Tier 1 execution.
+- `-CommandCodeUsageNote` / `-AntigravityUsageNote`: optional sanitized private reset/group notes; never include an account identifier or secret.
 - `-NoYolo`: explicit restricted-mode exception.
 
 ## Primary documentation
 
 - Command Code permissions: https://commandcode.ai/docs/permissions
 - Command Code headless mode: https://commandcode.ai/docs/headless
+- Command Code Provider API: https://commandcode.ai/docs/provider
+- Command Code GOAT plan: https://commandcode.ai/docs/plans/goat
+- Command Code models: https://commandcode.ai/docs/reference/cli/models
 - Antigravity headless mode: https://www.antigravity.google/docs/cli/headless/
 - Antigravity execution modes: https://www.antigravity.google/docs/cli/modes/
 - Antigravity projects/worktrees: https://www.antigravity.google/docs/projects?tab=cli

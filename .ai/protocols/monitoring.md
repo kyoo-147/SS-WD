@@ -44,6 +44,7 @@ Allowed outcomes are `SUCCEEDED`, `BLOCKED`, and `FAILED`. The marker reports wo
 - Revalidate endpoint/process identity before acting on a PID, handle, or pane.
 - Poll several active workers as one batch when the host supports it.
 - Never issue one long blind wait when lifecycle support is absent.
+- A blank terminal running buffered print mode is not evidence of inactivity. Confirm the launch mode, revalidate the process, and inspect worktree/file/log changes before intervening.
 - Record truncation and capture source; a terminal tail may omit the decisive result.
 
 ## Stall handling

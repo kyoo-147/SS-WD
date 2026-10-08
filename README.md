@@ -166,6 +166,8 @@ Each assignment should state:
 - what evidence it must return;
 - what “done” means.
 
+Before selecting a free route, open real Command Code and Antigravity TTYs and run `/usage` in each. Inspect all displayed windows and the quota group for the intended model. Recheck after several tasks or the reported reset time; free fallback is valid only while both paid providers are currently unavailable. With Git Bash-mediated Orca sends, use `MSYS_NO_PATHCONV=1` so `/usage` is not rewritten as a path. Never enable Command Code `/extra` without explicit Founder approval.
+
 For every worker:
 
 1. Check that the selected runtime is available.
@@ -191,6 +193,8 @@ WORKER_DONE:<role>:<task-id>:SUCCEEDED|BLOCKED|FAILED
 ```
 
 The marker tells the Chief what the worker believes happened. It does not replace review.
+
+Interactive TUIs are preferred when Founder inspection matters. Headless print mode may buffer output and show a blank terminal until completion; if used, disclose that behavior and verify progress through process, file, Git, and sentinel evidence.
 
 ## Public snapshot
 

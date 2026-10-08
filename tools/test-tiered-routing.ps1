@@ -12,7 +12,7 @@ if ($errors.Count -gt 0) {
 $board = & $runner -Prompt 'offline validation' -TaskProfile implementation -DryRun 2>&1 | Out-String
 $required = @(
     'commandcode',
-    'claude-sonnet-5-5',
+    'deepseek/deepseek-v4-flash',
     'agy',
     '9router/free',
     'poolside/laguna-s-2.1-free',
@@ -27,7 +27,7 @@ foreach ($value in $required) {
 }
 
 $architecture = & $runner -Prompt 'offline validation' -TaskProfile architecture -DryRun 2>&1 | Out-String
-if ($architecture -notmatch 'claude-fable-5-1' -or $architecture -notmatch 'gemini-3.1-pro-high') {
+if ($architecture -notmatch 'deepseek/deepseek-v4-pro' -or $architecture -notmatch 'gemini-3.1-pro-high') {
     Write-Error 'Architecture profile did not resolve to the expected Tier 1 models'
     exit 1
 }
@@ -39,6 +39,22 @@ if ($tierTwo -match '(?m)\s1\s+(commandcode|agy)') {
 }
 if ($tierTwo -notmatch '9router/free') {
     Write-Error 'StartTier 2 did not include the Navin gateway candidate'
+    exit 1
+}
+
+$blockedCmdc = & $runner -Prompt 'offline validation' -TaskProfile implementation -DryRun -CommandCodeUsageState blocked -AntigravityUsageState available 2>&1 | Out-String
+if ($blockedCmdc -match 'deepseek/deepseek-v4-flash' -or $blockedCmdc -notmatch 'gemini-3.8-flash-medium') {
+    Write-Error 'Usage-state filtering did not skip blocked Command Code and retain available Antigravity'
+    exit 1
+}
+
+$powerShellExecutable = (Get-Process -Id $PID).Path
+$ErrorActionPreference = 'Continue'
+$missingPreflightOutput = & $powerShellExecutable -NoProfile -File $runner -Prompt 'must fail before launch' -TaskProfile implementation -WorkingDirectory $PSScriptRoot 2>&1 | Out-String
+$missingPreflightExitCode = $LASTEXITCODE
+$ErrorActionPreference = 'Stop'
+if ($missingPreflightExitCode -ne 3 -or $missingPreflightOutput -notmatch 'requires fresh operator-attested') {
+    Write-Error 'Tier 1 execution did not fail closed when usage states were unknown'
     exit 1
 }
 

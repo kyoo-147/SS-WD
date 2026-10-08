@@ -14,6 +14,22 @@ All delegated workers run as independent inspectable command-line processes thro
 
 Read `.ai/skills/runtime-adapters.md`, `docs/RUNTIME-ADAPTERS.md`, and the selected platform guide before operating a host.
 
+## Paid-provider quota gate
+
+Quality-first routing is mandatory for each new worker turn:
+
+1. Open a real Command Code TTY and run `/usage`.
+2. Open a real Antigravity TTY and run `/usage` before declaring paid Tier 1 unavailable.
+3. Inspect every displayed window and the quota group for the intended model. A nonzero weekly balance can still be blocked by a shorter window, and one Antigravity model group can be exhausted while another is available.
+4. Use the smallest capable paid model in the first available provider: Command Code DeepSeek first, then Antigravity.
+5. Enter Navin or agent-native free tiers only after both paid providers are currently blocked by quota, authentication, capacity, or model availability.
+
+Quota checks are interactive slash commands, not `cmdc --usage` or `agy --usage` shell flags. When Git Bash sends the slash command through Orca, set `MSYS_NO_PATHCONV=1` so `/usage` is not rewritten as a Windows path.
+
+Refresh both checks after several tasks, after a meaningful elapsed interval, and after reported reset windows. Record the checked provider, model quota group, remaining/reset window, selected model, and fallback reason in private operational evidence. Never put account identifiers or quota balances in public tracked files.
+
+Do not enable Command Code `/extra`, upgrade an account, or incur pay-as-you-go charges without explicit Founder approval. Code, test, tool, workspace, policy, or runtime failures are not quota failures and never authorize model fallback.
+
 ## Exact unrestricted worker invocations
 
 When a project or Founder instruction restricts workers to Command Code and Antigravity, use these literal commands:
@@ -26,6 +42,10 @@ agy --dangerously-skip-permissions
 Do not describe one provider as another. Do not silently substitute a different provider when quota or authentication fails. Record the blocker and use only an explicitly allowed fallback.
 
 A host send receipt proves only the stages it names. Record input acceptance, submission, turn start, terminal worker state, and Chief acceptance separately. When lifecycle support is insufficient, inspect the endpoint, poll in bounded intervals, and require a unique completion sentinel.
+
+## Visibility policy
+
+Prefer a visible interactive TUI when Founder inspection or follow-up matters. Headless `-p` output may be buffered and leave a visible terminal blank until completion; use it only as a disclosed unattended fallback. When print mode is used, prove activity with revalidated process state, worktree/file changes, logs, and a completion sentinel rather than silence or an `input_accepted` receipt.
 
 ## Task contract
 

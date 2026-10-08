@@ -26,6 +26,16 @@ A send receipt may prove only `input_accepted`. When the installed host supports
 
 Use bounded terminal waits and cursor-based reads. If provider lifecycle is unsupported, require the task sentinel and poll the rendered terminal in bounded intervals while tracking cursor, output hash, timestamp, and process state.
 
+When sending an interactive slash command such as `/usage` from Git Bash, disable MSYS path conversion for that CLI invocation:
+
+```bash
+MSYS_NO_PATHCONV=1 orca terminal send --terminal <handle> --text "/usage" --enter --json
+```
+
+Without this guard, Git Bash can rewrite `/usage` into a local filesystem path and accidentally submit it as a normal model prompt.
+
+Prefer interactive worker TUIs when visible inspection matters. `cmdc -p` and similar print modes can buffer output, leaving the Orca tab blank until completion. If buffered mode is deliberately used, disclose it and monitor process/file/Git evidence rather than treating terminal silence as progress or failure.
+
 ## Capture
 
 Use terminal cursor reads for long output and retain the next cursor. Record whether the read was limited or truncated. A terminal tail is supporting evidence; inspect files, commits, and test output directly before acceptance.

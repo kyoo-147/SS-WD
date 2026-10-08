@@ -12,35 +12,44 @@ param(
     [int]$StartTier = 1,
     [switch]$NoYolo,
     [switch]$DryRun,
-    [string]$EvidencePath
+    [string]$EvidencePath,
+
+    [ValidateSet('unknown', 'available', 'blocked')]
+    [string]$CommandCodeUsageState = 'unknown',
+    [ValidateSet('unknown', 'available', 'blocked')]
+    [string]$AntigravityUsageState = 'unknown',
+    [string]$CommandCodeUsageNote,
+    [string]$AntigravityUsageNote
 )
 
 $ErrorActionPreference = 'Continue'
 
-function New-Candidate([int]$Tier, [string]$Agent, [string]$Model, [string]$Source, [string]$Evidence) {
+function New-Candidate([int]$Tier, [string]$Agent, [string]$Model, [string]$Source, [string]$Evidence, [string]$UsageState = 'not-applicable', [string]$UsageNote = '') {
     [pscustomobject]@{
         Tier = $Tier
         Agent = $Agent
         Model = $Model
         Source = $Source
         Evidence = $Evidence
+        UsageState = $UsageState
+        UsageNote = $UsageNote
     }
 }
 
 $commandCodeModel = switch ($TaskProfile) {
-    'architecture' { 'claude-fable-5-1' }
-    'review' { 'claude-opus-5-5' }
-    'implementation' { 'claude-sonnet-5-5' }
-    'ui' { 'minimaxai/minimax-m3' }
+    'architecture' { 'deepseek/deepseek-v4-pro' }
+    'review' { 'deepseek/deepseek-v4-pro' }
+    'implementation' { 'deepseek/deepseek-v4-flash' }
+    'ui' { 'deepseek/deepseek-v4-flash' }
     'scan' { 'deepseek/deepseek-v4-flash' }
-    default { 'claude-sonnet-5-5' }
+    default { 'deepseek/deepseek-v4-flash' }
 }
 
 $agyModel = switch ($TaskProfile) {
     'architecture' { 'gemini-3.1-pro-high' }
     'review' { 'gemini-3.1-pro-high' }
-    'implementation' { 'claude-sonnet-5-5-high' }
-    'ui' { 'claude-sonnet-5-5-high' }
+    'implementation' { 'gemini-3.8-flash-medium' }
+    'ui' { 'gemini-3.8-flash-medium' }
     'scan' { 'gemini-3.8-flash-low' }
     default { 'gemini-3.8-flash-high' }
 }
@@ -53,8 +62,8 @@ $nativeFree = switch ($TaskProfile) {
 }
 
 $candidates = [System.Collections.Generic.List[object]]::new()
-$candidates.Add((New-Candidate 1 'commandcode' $commandCodeModel 'native-account' 'live-status-and-model-list-required'))
-$candidates.Add((New-Candidate 1 'agy' $agyModel 'native-account' 'live-model-list-required'))
+$candidates.Add((New-Candidate 1 'commandcode' $commandCodeModel 'native-account' 'live-tty-usage-and-model-list-required' $CommandCodeUsageState $CommandCodeUsageNote))
+$candidates.Add((New-Candidate 1 'agy' $agyModel 'native-account' 'live-tty-usage-and-model-list-required' $AntigravityUsageState $AntigravityUsageNote))
 $candidates.Add((New-Candidate 2 'opencode' '9router/free' 'navin-gateway' 'authenticated-smoke-required'))
 foreach ($model in $nativeFree) {
     $candidates.Add((New-Candidate 3 'commandcode' $model 'native-free' 'catalog-and-smoke-required'))
@@ -69,6 +78,16 @@ foreach ($model in @('laguna-s-2.1-free', 'ling-3.0-tiny-free', 'longcat-2.0-fre
         $candidates.Add((New-Candidate 3 'opencode' "opencode/$model" 'opencode-native-free' 'live-model-list-verified'))
     }
 }
+
+if (-not $DryRun -and $StartTier -eq 1 -and ($CommandCodeUsageState -eq 'unknown' -or $AntigravityUsageState -eq 'unknown')) {
+    Write-Error '[BLOCKED] Tier 1 requires fresh operator-attested Command Code and Antigravity /usage states. Open real TTYs, run /usage in both, then pass -CommandCodeUsageState and -AntigravityUsageState as available or blocked.'
+    exit 3
+}
+
+$eligibleCandidates = @($candidates | Where-Object {
+    $_.Tier -ge $StartTier -and
+    -not ($_.Tier -eq 1 -and $_.UsageState -eq 'blocked')
+})
 
 function Test-TransientFailure([string]$Text) {
     $Text -match '(?i)(timeout|timed out|ECONN|ETIMEDOUT|429|502|503|504|temporarily unavailable|overloaded|rate limit|capacity|network error|connection reset)'
@@ -108,11 +127,11 @@ function Invoke-Candidate($Candidate) {
 
 $events = [System.Collections.Generic.List[object]]::new()
 if ($DryRun) {
-    $candidates | Where-Object Tier -ge $StartTier | Select-Object Tier, Agent, Model, Source, Evidence | Format-Table -AutoSize
+    $eligibleCandidates | Select-Object Tier, Agent, Model, Source, Evidence, UsageState | Format-Table -AutoSize
     exit 0
 }
 
-foreach ($candidate in ($candidates | Where-Object Tier -ge $StartTier)) {
+foreach ($candidate in $eligibleCandidates) {
     for ($attempt = 1; $attempt -le [Math]::Max(1, $MaxAttempts); $attempt++) {
         $started = [DateTimeOffset]::UtcNow
         $result = Invoke-Candidate $candidate
@@ -125,6 +144,8 @@ foreach ($candidate in ($candidates | Where-Object Tier -ge $StartTier)) {
             exitCode = $result.ExitCode
             transient = Test-TransientFailure $result.Output
             fallbackEligible = Test-FallbackEligible $result.Output
+            usageState = $candidate.UsageState
+            usageNote = $candidate.UsageNote
         }
         $events.Add($event)
 

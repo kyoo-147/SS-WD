@@ -96,3 +96,6 @@ Before dispatch, answer:
 Use strong models for ambiguity, architecture, security, and review. Use fast models for scanning, extraction, mechanical editing, and test execution. Upgrade worker capability when evidence quality is insufficient; change runtime only through an explicit, allowed routing decision.
 
 Apply the three-tier availability policy in `.ai/skills/model-routing.md`: Command Code then Antigravity, then the Navin `free` combo, then verified agent-native free models. A code/test/tool failure is not quota failure and must not trigger model fallback.
+
+### Returned completion through Orca
+When AGY or another worker runs in Orca, use a supervised Dispatch and require its final `worker_done` message to the Chief Run. A terminal-only response is not a returned result.

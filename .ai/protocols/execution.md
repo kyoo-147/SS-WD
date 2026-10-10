@@ -12,3 +12,6 @@
 10. **Report** concisely under DONE, VERIFIED, ISSUES, and NEXT.
 
 The Chief remains responsible for monitoring, integration, verification, append-only worker tracking, and safe cleanup even when workers implement changes. Runtime hosts are replaceable adapters; dirty, ambiguous, active-main and in-progress work is always preserved.
+
+## Orca completion delivery
+For supervised Orca workers, bind the terminal to a Dispatch before completion. The worker must send exactly one `worker_done` delivery back to the coordinator Run with Task/Dispatch IDs, outcome, commit and verification evidence; terminal-only completion is not sufficient. The Chief consumes and acknowledges that delivery before acceptance.

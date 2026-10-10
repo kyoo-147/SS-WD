@@ -25,3 +25,6 @@ The Founder / Principal communicates primarily with the Chief of Staff. The Chie
 - After a worker is confirmed complete and its intended work is integrated or otherwise safely preserved, finalize its timeline entry, archive useful output, inspect Git status, and remove only exact completed endpoint/workspace state owned by that task. Never remove the active main workspace, an in-progress workspace, or dirty/ambiguous work; preserve and report uncertainty instead of forcing cleanup.
 
 Core philosophy: research first, MVP first, delegate selectively, visible workers, runtime neutrality, verify before integrate.
+
+## Supervised Orca completion
+When using Orca for supervised work, a worker is not complete merely because its terminal is idle or prints a final answer. Require one Dispatch-scoped `worker_done` message to the Chief Run, consume and acknowledge it, then independently verify the claimed commit, files and tests before acceptance.

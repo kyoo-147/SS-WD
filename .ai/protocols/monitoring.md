@@ -19,6 +19,9 @@ Events shorten latency; polling remains the fallback. Native `idle` or `done` ne
 
 Track these separately:
 
+## FFWD notification checkpoints
+At every transition into `blocked`, `waiting`, `question`, `review`, `terminal`, or `accepted_by_chief`, send a message to the Captain before pausing. The message must name the task and workspace, current state, evidence so far, the exact question/approval needed or completion result, and the next action. Silence is never an acceptable representation of waiting, completion, or failure. On a manually launched worker, require the same report and completion sentinel; on Orca, require the Dispatch-scoped `worker_done` delivery.
+
 - `accepted`: host accepted the input;
 - `submitted`: submit/Enter was delivered;
 - `turn_started`: processing was observed;
@@ -36,6 +39,9 @@ Every assignment on a runtime without reliable lifecycle completion ends with:
 `WORKER_DONE:<role>:<task-id>:<outcome>`
 
 Allowed outcomes are `SUCCEEDED`, `BLOCKED`, and `FAILED`. The marker reports worker state only. The Chief still verifies the result.
+
+### Orca returned-completion rule
+For Orca-supervised work, a terminal-only final message is not completion evidence. Bind the worker to a Dispatch and require exactly one Orca `worker_done` message addressed to the Chief Run, containing the Task ID, Dispatch ID, outcome, concise summary, commit SHA, changed files, report path, verification commands/results, and explicit `VERIFIED`/`BLOCKED`/`UNVERIFIED` items. The Chief must consume and acknowledge the Orca delivery before accepting the worker result. If a worker was launched manually, inject or bind the Dispatch before completion; do not rely on a silent AGY/Pi terminal.
 
 ## Polling
 

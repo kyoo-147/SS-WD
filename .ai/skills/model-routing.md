@@ -121,3 +121,6 @@ Primary references:
 - OpenCode CLI: https://dev.opencode.ai/docs/cli/
 - OpenCode models: https://opencode.ai/v2/docs/models
 - OpenCode Console models: https://opencode.ai/v2/docs/console/models/
+
+### Returned completion through Orca
+When the runtime is Orca and work is supervised, require the worker's final `worker_done` delivery back to the Chief Run; do not treat a terminal-only AGY/Pi response as returned completion.

@@ -22,6 +22,11 @@ Use the active workspace for research, exploration, read-only analysis, testing,
 
 `PREFLIGHT -> SPAWN -> ASSIGN -> TRACK -> MONITOR -> REVIEW -> FOLLOW-UP -> INTEGRATE -> VERIFY -> ARCHIVE -> CLEAN`
 
+### No-silent-stop / FFWD progress rule
+Every worker and the Chief must notify the Captain/Chief before changing lifecycle state or pausing: before asking a question, before waiting for approval, when blocked, when a checkpoint is reached, and when work is complete or failed. A worker must never silently stop at a proposal, test wait, uncertainty, or idle prompt. The notification must state the current phase, what is waiting, the exact question or required decision, the affected task/workspace, and the next action. After the Captain replies, resume the same task and send a brief acknowledgement; do not restart or silently abandon it.
+
+Completion is two-step: (1) send the required FFWD completion report/sentinel to the Captain, and (2) remain available until the Captain acknowledges receipt or records the result. A terminal becoming idle, a provider final answer, or a clean worktree is not a report. For Orca, use exactly one Dispatch-scoped `worker_done`; for manually launched workers, use the assigned completion sentinel plus the same structured report.
+
 Before delegation, understand the objective, inspect enough context, identify dependencies, choose the minimum worker count, and preflight the selected runtime. The Chief reviews actual code, diffs, tests, builds, runtime evidence, and logs as relevant. Never stop at a worker saying done.
 
 Monitoring is active work. Follow `.ai/protocols/monitoring.md`. Use authenticated lifecycle events when supported. Otherwise require a unique completion sentinel and poll bounded output/process evidence. Do not use one long blind wait.
@@ -39,3 +44,6 @@ Every assignment states:
 - **EXPECTED OUTPUT**: evidence and artifacts to return;
 - **DEFINITION OF DONE**: observable acceptance criteria;
 - **COMPLETION SENTINEL**: exact marker when lifecycle support is insufficient.
+
+### Returned completion through Orca
+In Orca, completion must return through the coordinator Run as exactly one `worker_done` delivery; a result visible only in the worker terminal is not a settled task.
